@@ -1,3 +1,11 @@
+local weapons = {
+    {name = "weapon_assaultrifle"},
+    {name = "weapon_bullpuprifle"},
+    {name = "weapon_combatmg"},
+    {name = "weapon_gusenberg"}
+}
+
+local j = nil
 
 -- fonction pour faire spawn les peds avec leur armes
 function spawnped(V3Co, Ped, WeaponName)
@@ -28,7 +36,11 @@ function spawnped(V3Co, Ped, WeaponName)
     SetPedArmour(FighterPed, 100)
     SetPedMaxHealth(FighterPed, 100)
 
-    local weaponName = WeaponName
+    j = math.random(1, #weapons)
+
+    print("Weapon give - "..j)
+
+    local weaponName = weapons[j].name
     local weaponHash = GetHashKey(weaponName)
     GiveWeaponToPed(FighterPed, weaponHash, 1000, false, true)
     TaskCombatPed(FighterPed, "PLAYER", 0, 16)
@@ -37,6 +49,7 @@ end
 
 -- Commandes pour tester si tout fonctionne
 RegisterCommand("ped", function (source, args, rawcommand)
+
     print("In progress...")
     for k, v in pairs(Config.Pos.zone1) do
         print(k.." - "..v)
