@@ -25,16 +25,12 @@ function spawnped(V3Co, Ped, WeaponName)
     TaskCombatPed(FighterPed, player, 0, 16)
 end
 
---vector3(-1119.452, 4925.132, 218.3747)
-
---Citizen.CreateThread(function()
---    Citizen.Await(1000)
---    spawnped(vector3(-1119.452, 4925.132, 218.3747), "a_m_y_beach_03", "weapon_assaultrifle")
---end)
-
 RegisterCommand("ped", function (source, args, rawcommand)
     print("In progress...")
-    spawnped(vector3(-1119.452, 4925.132, 218.3747), "csb_mweather", "weapon_assaultrifle")
+    for k, v in pairs(Config.Pos.zone1) do
+        print(k.." - "..v)
+        spawnped(v, "csb_mweather", "weapon_assaultrifle")
+    end
 end)
 
 Citizen.CreateThread(function()
