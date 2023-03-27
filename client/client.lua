@@ -1,4 +1,3 @@
-
 -- Liste des armes pour les peds
 local weapons = {
     {name = "weapon_assaultrifle"},
@@ -11,18 +10,20 @@ local j = nil
 local FighterPed = nil
 
 -- Fonction pour faire spawn les peds avec leur armes
-function spawnped(V3Co, Ped)
-    
+function spawnped(V3Co)
+
     local player = PlayerPedId(-1)
     local pos = V3Co
-    
-    local pedName = Ped
-    local pedHash = GetHashKey(pedName)
+    local pedName = nil
+    TriggerServerEvent("{[DIXLAN]}:notifSpawn")
 
+    for k, v in pairs(Config.ped) do
+        pedName = v
+    end
+        local pedHash = GetHashKey(pedName)
     RequestModel(pedHash)
     while not HasModelLoaded(pedHash) do
         Citizen.Wait(10)
-        print("loading ped")
     end
         local FighterPed = CreatePed(9, pedHash, pos.x, pos.y, pos.z, 0, true, false)
 
@@ -41,47 +42,88 @@ function spawnped(V3Co, Ped)
 
         j = math.random(1, #weapons)
 
-        print("Weapon give - "..j)
-
         local weaponName = weapons[j].name
         local weaponHash = GetHashKey(weaponName)
         GiveWeaponToPed(FighterPed, weaponHash, 1000, false, true)
         TaskCombatPed(FighterPed, "PLAYER", 0, 16)
-
 end
 
+-- /!\ NOT WORKING FOR THE MOMENT /!\
 
+-- Commandes pour faire spawn dans certaines zone
 
--- Commandes pour tester si tout fonctionne
-RegisterCommand("ped", function (source, args, rawcommand)
-    print("In progress...")
-    if args[1] == "1" then
-        for k, v in pairs(Config.Pos.zone1) do
-            print(k.." - "..v)
-            spawnped(v, "csb_mweather")
-        end
+--RegisterNetEvent("{[DIXLAN]}:SpawnCommand")
+--AddEventHandler("{[DIXLAN]}:SpawnCommand", function(source, argument)
+--    print("Client Side Event Trigeredd")
+--    print("Client Side - "..argument)
+--    if argument == "1" then
+--        for k, v in pairs(Config.Pos.zone1) do
+--            spawnped(v)
+--        end
+--
+--    elseif argument == "2" then
+--        for k, v in pairs(Config.Pos.zone2) do
+--            spawnped(v)
+--        end    
+--
+--    elseif argument == "3" then
+--        for k, v in pairs(Config.Pos.zone3) do
+--            spawnped(v)
+--        end
+--
+--    elseif argument == "4" then
+--        for k, v in pairs(Config.Pos.zone4) do
+--            spawnped(v)
+--        end
+--
+--    elseif argument == "5" then
+--        for k, v in pairs(Config.Pos.zone5) do
+--            spawnped(v)
+--        end
+--
+--    elseif argument == "6" then
+--        for k, v in pairs(Config.Pos.zone6) do
+--            spawnped(v)
+--        end
+--
+--    elseif argument == "7" then
+--        for k, v in pairs(Config.Pos.zone7) do
+--            spawnped(v)
+--        end
+--    end
+--end)
+
+Citizen.CreateThread(function()
+local timer = 60000 * 60 -- respawn toutes les 60 minutes 
+Citizen.Wait(timer)
+    for k, v in pairs(Config.Pos.zone1) do
+        spawnped(v)
     end
 
-    if args[1] == "2" then
-        for k, v in pairs(Config.Pos.zone2) do
-            print(k.." - "..v)
-            spawnped(v, "csb_mweather")
-        end
+    for k, v in pairs(Config.Pos.zone2) do
+        spawnped(v)
     end
 
-    if args[1] == "3" then
-        for k, v in pairs(Config.Pos.zone3) do
-            print(k.." - "..v)
-            spawnped(v, "csb_mweather")
-        end
+    for k, v in pairs(Config.Pos.zone3) do
+        spawnped(v)
+    end
+
+    for k, v in pairs(Config.Pos.zone4) do
+        spawnped(v)
+    end
+
+    for k, v in pairs(Config.Pos.zone5) do
+        spawnped(v)
+    end
+
+    for k, v in pairs(Config.Pos.zone6) do
+        spawnped(v)
     end
 end)
-
 
 -- Blips
 Citizen.CreateThread(function()
     for k, v in pairs(Config.blip) do
-        print(k.." - "..v)
         local pos = v
         local FightZone = AddBlipForCoord(pos, 100)
         local NumZoneHostile = k
@@ -93,8 +135,4 @@ Citizen.CreateThread(function()
         AddTextComponentString("Zone Hostile ~r~["..NumZoneHostile.."]~s~")
         EndTextCommandSetBlipName(FightZone)
     end
-end)
-
-Citizen.CreateThread(function()
-    
 end)
